@@ -12,6 +12,10 @@ brand mark) so it looks identical everywhere with no font dependency.
 > that — total style isolation, zero network requests, no JS required, no
 > tracking, accessible, and SEO-safe (the link is deliberately `nofollow`).
 
+> **Agent skill:** [`skills/attribution/SKILL.md`](skills/attribution/SKILL.md)
+> is a Claude Code skill that applies this kit to a client repo — copy it into
+> the client repo's `.claude/skills/` (or `.agent/skills/`) directory.
+
 > **Note on the kit's original README:** the kit's own README ships unchanged as
 > [`docs/KIT-README-original.md`](docs/KIT-README-original.md). It remains the
 > detailed reference (per-stack quick starts, email/native recipes, credit-line
