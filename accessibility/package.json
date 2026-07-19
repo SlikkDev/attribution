@@ -1,0 +1,17 @@
+{
+  "//": "devDependencies exist ONLY for the test rig. The kit itself ships zero dependencies — the widget is one hand-authored file, and the route's imports (zod, nodemailer) come from the host app.",
+  "name": "slikk-accessibility-kit",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "demo": "node demo/serve.js",
+    "test": "node --test test/route.test.js",
+    "test:e2e": "node --test test/e2e.test.js"
+  },
+  "devDependencies": {
+    "axe-core": "^4.10.3",
+    "nodemailer": "^6.10.1",
+    "playwright": "^1.61.1",
+    "zod": "^3.24.2"
+  }
+}

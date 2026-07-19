@@ -1,0 +1,225 @@
+<!doctype html>
+<!-- Accessibility Kit demo — the widget placed the way a client site would
+     place it (inline, in the footer flow; no fixed positioning). Local only:
+     serve with `node demo/serve.js`, which also mocks POST /api/a11y-report.
+     Fonts stay on the system stack so the page makes zero network requests —
+     the production site self-hosts Outfit/Inter/Heebo instead. -->
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Accessibility Kit — Demo · Slikk.Dev</title>
+  <link rel="icon" href="data:,">
+  <style>
+    /* slikk.dev design tokens (globals.css) — dark default, light via data-theme */
+    :root, [data-theme="dark"] {
+      --canvas: #080808;
+      --surface: #111111;
+      --ink: #F0EDE8;
+      --ink-soft: rgba(240, 237, 232, 0.66);
+      --ink-mute: rgba(240, 237, 232, 0.55);
+      --line: rgba(240, 237, 232, 0.09);
+      --line-2: rgba(240, 237, 232, 0.16);
+      --accent: #FF2D6B;
+      --accent-strong: #E6004E;
+      --accent-ink: #ffffff;
+      color-scheme: dark;
+    }
+    [data-theme="light"] {
+      --canvas: #F8F5F0;
+      --surface: #ECE5DB;
+      --ink: #17130F;
+      --ink-soft: rgba(23, 19, 15, 0.70);
+      --ink-mute: rgba(23, 19, 15, 0.62);
+      --line: rgba(23, 19, 15, 0.11);
+      --line-2: rgba(23, 19, 15, 0.18);
+      --accent: #CC0046;
+      --accent-strong: #CC0046;
+      --accent-ink: #ffffff;
+      color-scheme: light;
+    }
+
+    * { box-sizing: border-box; }
+    html { height: 100%; }
+    body {
+      margin: 0; min-height: 100%;
+      display: flex; flex-direction: column;
+      background: var(--canvas); color: var(--ink);
+      font: 400 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    /* Hebrew leads with Heebo, exactly like the production sites; naming the
+       family costs zero network requests — it simply falls through when the
+       font isn't installed. */
+    [dir="rtl"] body { font-family: "Heebo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    /* Reserve the trigger's height before the deferred script upgrades the
+       element, so the widget's arrival never shifts this page's layout. */
+    slikk-a11y:not(:defined) { display: inline-block; min-block-size: 40px; }
+    ::selection { background: var(--accent); color: var(--accent-ink); }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+    .shell { width: 100%; max-width: 980px; margin-inline: auto; padding-inline: clamp(1.25rem, 4vw, 3rem); }
+
+    header {
+      border-block-end: 1px solid var(--line);
+    }
+    header .shell {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap; padding-block: 18px;
+    }
+    .brand { display: inline-flex; padding: 4px 2px; color: var(--ink); border-radius: 4px; }
+    .brand svg { height: 18px; width: auto; display: block; }
+
+    .toggles { display: flex; align-items: center; gap: 8px; }
+    .toggles .sep { inline-size: 1px; block-size: 20px; background: var(--line-2); }
+    .toggles button {
+      min-block-size: 36px; padding: 8px 14px;
+      background: none; color: var(--ink-soft);
+      border: 1px solid var(--line-2); border-radius: 999px;
+      font: 600 13px/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      cursor: pointer; transition: color 0.18s ease, background 0.18s ease;
+    }
+    .toggles button:hover { color: var(--ink); }
+    .toggles button[aria-pressed="true"] {
+      background: var(--accent-strong); border-color: var(--accent-strong);
+      color: var(--accent-ink);
+    }
+
+    main { flex: 1; }
+    main .shell { padding-block: clamp(3rem, 9vh, 6.5rem); }
+    h1 {
+      margin: 0;
+      font-size: clamp(2.2rem, 1.2rem + 4.5vw, 4.2rem);
+      font-weight: 800; letter-spacing: -0.035em; line-height: 0.98;
+    }
+    .steps {
+      margin: 2.75rem 0 0; padding: 0; list-style: none;
+      counter-reset: step; max-width: 34rem;
+    }
+    .steps li {
+      counter-increment: step;
+      position: relative; padding-inline-start: 2.6rem;
+      margin-block-start: 1.4rem; color: var(--ink-soft);
+    }
+    .steps li::before {
+      content: counter(step, decimal-leading-zero);
+      position: absolute; inset-inline-start: 0; top: 0.2em;
+      font: 600 0.7rem/1 system-ui, sans-serif;
+      letter-spacing: 0.22em; color: var(--accent);
+    }
+
+    footer { border-block-start: 1px solid var(--line); }
+    footer .shell {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap; padding-block: 22px;
+    }
+    .note { margin: 0; font-size: 13px; color: var(--ink-mute); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="shell">
+      <a class="brand" id="brand" href="https://slikk.dev/" target="_blank"
+        rel="nofollow noopener noreferrer"
+        aria-label="Slikk.Dev — opens slikk.dev in a new tab">
+        <svg viewBox="25 -738 3844 756" aria-hidden="true" focusable="false">
+          <path fill="currentColor" d="M282 12Q193 12 134 -16Q74 -43 31 -101L167 -214Q196 -176 234 -156Q272 -135 325 -135Q370 -135 397 -151Q425 -166 430 -193Q435 -218 420 -235Q406 -251 379 -263Q352 -276 318 -287Q285 -299 254 -316Q222 -332 197 -356Q172 -380 161 -416Q151 -452 161 -505Q175 -572 217 -621Q259 -669 322 -695Q385 -720 462 -720Q539 -720 599 -695Q659 -669 692 -623L555 -510Q529 -542 500 -558Q470 -574 430 -574Q394 -574 370 -561Q346 -548 342 -524Q337 -500 352 -485Q367 -470 394 -458Q421 -447 454 -435Q487 -423 519 -407Q551 -390 576 -366Q600 -340 611 -303Q621 -265 610 -210Q589 -105 503 -47Q416 12 282 12Z M602 0 747 -729H922L776 0Z M832 0 930 -489H1104L1006 0ZM1028 -546Q989 -546 968 -572Q948 -599 956 -638Q964 -678 995 -705Q1026 -732 1066 -732Q1106 -732 1126 -705Q1146 -678 1138 -638Q1130 -599 1099 -572Q1069 -546 1028 -546Z M1376 0 1274 -256 1473 -489H1664L1422 -226L1439 -290L1576 0ZM1062 0 1208 -729H1383L1237 0Z M1894 0 1792 -256 1991 -489H2182L1940 -226L1957 -290L2094 0ZM1580 0 1726 -729H1901L1755 0Z M2459 0 2485 -128H2626Q2676 -128 2717 -147Q2757 -166 2785 -204Q2813 -241 2823 -295Q2834 -349 2821 -386Q2808 -422 2775 -442Q2743 -461 2693 -461H2545L2571 -588H2719Q2787 -588 2840 -567Q2894 -546 2928 -507Q2963 -468 2975 -414Q2988 -360 2975 -294Q2961 -228 2927 -174Q2893 -120 2843 -81Q2793 -42 2732 -21Q2670 0 2603 0ZM2359 0 2477 -588H2626L2508 0Z M3147 10Q3078 10 3031 -17Q2984 -44 2964 -93Q2944 -141 2957 -203Q2969 -264 3008 -312Q3046 -360 3102 -388Q3158 -415 3221 -415Q3283 -415 3325 -389Q3367 -363 3385 -317Q3402 -271 3391 -212Q3388 -200 3384 -187Q3381 -175 3374 -158L3015 -156L3034 -249L3335 -251L3262 -211Q3268 -245 3263 -267Q3259 -289 3244 -300Q3228 -312 3202 -312Q3175 -312 3152 -299Q3129 -286 3114 -261Q3098 -237 3091 -203Q3084 -168 3091 -144Q3098 -120 3117 -107Q3136 -95 3168 -95Q3197 -95 3222 -104Q3247 -114 3269 -135L3330 -60Q3293 -25 3246 -8Q3200 10 3147 10Z M3488 0 3404 -406H3559L3595 -64H3536L3709 -406H3862L3615 0Z"/>
+          <path fill="#FF2D6B" d="M2200 12Q2157 12 2129 -18Q2100 -47 2100 -90Q2100 -133 2129 -162Q2157 -191 2200 -191Q2244 -191 2272 -162Q2300 -133 2300 -90Q2300 -47 2272 -18Q2244 12 2200 12Z"/>
+        </svg>
+      </a>
+      <div class="toggles">
+        <button type="button" id="t-dark" aria-pressed="true" data-key="themeDark">Dark</button>
+        <button type="button" id="t-light" aria-pressed="false" data-key="themeLight">Light</button>
+        <span class="sep" aria-hidden="true"></span>
+        <button type="button" id="l-en" aria-pressed="true" lang="en">EN</button>
+        <button type="button" id="l-he" aria-pressed="false" lang="he">עב</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="shell">
+      <h1 data-key="hero">Go ahead. Find something wrong.</h1>
+      <ol class="steps">
+        <li data-key="step1">Click the badge in the corner — that's the whole install, by the way.</li>
+        <li data-key="step2">Now put the mouse down. Tab, Enter, Escape — everything works without it.</li>
+        <li data-key="step3">Flip the theme and the language. The widget keeps up — no reload, no drama.</li>
+      </ol>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <p class="note" data-key="note">File a fake report — nothing is emailed from this page.</p>
+      <slikk-a11y id="widget" lang="en" theme="dark"></slikk-a11y>
+    </div>
+  </footer>
+
+  <script src="/slikk-a11y.webcomponent.js" defer></script>
+  <script>
+    // Demo chrome only — the widget itself never reads globals or host state.
+    const DICT = {
+      en: {
+        title: 'Accessibility Kit — Demo · Slikk.Dev',
+        hero: 'Go ahead. Find something wrong.',
+        step1: "Click the badge in the corner — that's the whole install, by the way.",
+        step2: 'Now put the mouse down. Tab, Enter, Escape — everything works without it.',
+        step3: 'Flip the theme and the language. The widget keeps up — no reload, no drama.',
+        note: 'File a fake report — nothing is emailed from this page.',
+        themeDark: 'Dark',
+        themeLight: 'Light',
+        brandAria: 'Slikk.Dev — opens slikk.dev in a new tab',
+      },
+      he: {
+        title: 'ערכת הנגישות — דמו · Slikk.Dev',
+        hero: 'קדימה. תמצאו משהו לא בסדר.',
+        step1: 'לחצו על התג בפינה — זו, אגב, כל ההתקנה.',
+        step2: 'עכשיו הניחו את העכבר. Tab, Enter, Escape — הכול עובד גם בלעדיו.',
+        step3: 'החליפו ערכת נושא ושפה. הווידג\'ט עומד בקצב — בלי רענון, בלי דרמה.',
+        note: 'שלחו דיווח ניסיון — שום דבר לא נשלח מהעמוד הזה.',
+        themeDark: 'כהה',
+        themeLight: 'בהיר',
+        brandAria: 'Slikk.Dev — slikk.dev נפתח בכרטיסייה חדשה',
+      },
+    };
+
+    const widget = document.getElementById('widget');
+    const pressed = (btn, isOn) => btn.setAttribute('aria-pressed', String(isOn));
+
+    function setTheme(theme) {
+      document.documentElement.dataset.theme = theme;
+      widget.setAttribute('theme', theme);
+      pressed(document.getElementById('t-dark'), theme === 'dark');
+      pressed(document.getElementById('t-light'), theme === 'light');
+    }
+
+    function setLang(lang) {
+      const t = DICT[lang];
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+      document.title = t.title;
+      document.querySelectorAll('[data-key]').forEach((el) => {
+        el.textContent = t[el.dataset.key];
+      });
+      document.getElementById('brand').setAttribute('aria-label', t.brandAria);
+      widget.setAttribute('lang', lang);
+      pressed(document.getElementById('l-en'), lang === 'en');
+      pressed(document.getElementById('l-he'), lang === 'he');
+    }
+
+    document.getElementById('t-dark').addEventListener('click', () => setTheme('dark'));
+    document.getElementById('t-light').addEventListener('click', () => setTheme('light'));
+    document.getElementById('l-en').addEventListener('click', () => setLang('en'));
+    document.getElementById('l-he').addEventListener('click', () => setLang('he'));
+  </script>
+</body>
+</html>
