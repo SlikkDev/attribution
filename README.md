@@ -135,6 +135,16 @@ The line before the wordmark is a signature, not an ad. Binding rules:
 | ottoman | Launched without a waitlist by | שוגר בלי רשימת המתנה על־ידי |
 | Aretz | — | הותסס לאט על־ידי |
 | ffvsl-pro | Engineered by (deliberately quiet — renders on end-users' shared pages) | — |
+| caesarea-jiu-jitsu | — | נבנה במשמעת ובענווה על־ידי |
+| yarin.io | Charted and built by | שורטט ונבנה על־ידי |
+| lun | Brewed in moonlight by | נרקח לאור הירח על־ידי |
+| dealmakers | — | נבנה כמו עסקה טובה על־ידי |
+| Ansy | Built for everyone by | נבנה בשביל כולם על־ידי |
+| gatit | Built to take notes by | — |
+| retter-hq | — | נבנה ומופעל על־ידי |
+| ticktack | Hebrew-first fork by | הותאם לעברית על־ידי |
+| kooks | Cooked from scratch by | — |
+| izipizy | Counted carefully by | נספר בקפידה על־ידי |
 | gorillads *(historical)* | — | נבנה עם כמויות מפוקפקות של שאפתנות וקפאין ע"י *(pre-dates these rules; its ע"י abbreviation is a flagged anti-pattern — don't copy)* |
 
 ---
